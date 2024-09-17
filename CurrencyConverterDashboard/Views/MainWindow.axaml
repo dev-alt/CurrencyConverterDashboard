@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:CurrencyConverterDashboard.ViewModels"
+        xmlns:views="clr-namespace:CurrencyConverterDashboard.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CurrencyConverterDashboard.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Currency Converter Dashboard">
+
+    <!-- Design-time DataContext for XAML designer -->
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <!-- Main Grid layout with 5 rows -->
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Margin="20">
+        <!-- Row 0: Dashboard Title -->
+        <TextBlock Grid.Row="0" Text="Currency Converter Dashboard" FontSize="24" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <!-- Row 1: Base Currency Selector -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="0,0,0,20">
+            <TextBlock Text="Base Currency:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedBaseCurrency}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Code}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
+
+        <!-- Row 2: Top Currencies Display -->
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding TopCurrencies}" Margin="0,0,0,20">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="10"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <views:CurrencyRateCard />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Row 3: Currency Conversion Interface -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto">
+            <!-- From Currency Section -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="From Currency:" Margin="0,0,0,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding FromCurrency}" Margin="0,0,10,10">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Code}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding FromAmount}" Watermark="Enter amount" Margin="0,0,10,10"/>
+
+
+            <!-- To Currency Section -->
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="To Currency:" Margin="0,0,0,5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Currencies}" SelectedItem="{Binding ToCurrency}" Margin="0,0,0,10">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Code}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ToAmount, StringFormat='{}{0:N2}'}" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <!-- Convert Button -->
+            <Button Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Content="Convert" Command="{Binding ConvertCommand}" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <!-- Row 4: Error Message Display -->
+        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0"/>
+    </Grid>
+</Window>
